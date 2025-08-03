@@ -1,8 +1,0 @@
-org/example/dto/UserDto.class
-org/example/repository/UserRepository.class
-org/example/service/UserServiceImpl.class
-org/example/Application.class
-org/example/service/UserService.class
-org/example/controller/UserController.class
-org/example/util/HibernateUtil.class
-org/example/model/User.class
