@@ -1,5 +1,7 @@
 package org.example.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.example.dto.UserDto;
 import org.example.model.User;
@@ -22,12 +24,15 @@ public class UserController {
 
     private final UserService userService;
 
+    @Operation(summary = "Создает нового пользователя")
+    @ApiResponse(responseCode = "200", description = "Пользователь создан")
     @PostMapping
     public ResponseEntity<UserDto> createdUser(@RequestBody UserDto userDto) {
         User user = userService.createUser(userDto);
         return ResponseEntity.ok(new UserDto(user.getName(), user.getEmail(), user.getAge()));
     }
 
+    @Operation(summary = "Возвращает всех пользователей")
     @GetMapping
     public CollectionModel<EntityModel<UserDto>> getAllUsers() {
         List<EntityModel<UserDto>> users = userService.getAllUsers().stream()
@@ -42,6 +47,7 @@ public class UserController {
                 linkTo(methodOn(UserController.class).getAllUsers()).withSelfRel());
     }
 
+    @Operation(summary = "Возвращает пользователя по id")
     @GetMapping("/{id}")
     public EntityModel<UserDto> getUserById(@PathVariable Long id) {
         User user = userService.getUserById(id);
@@ -57,13 +63,16 @@ public class UserController {
         return model;
     }
 
+    @Operation(summary = "Обновляет пользователя")
+    @ApiResponse(responseCode = "200", description = "Пользователь обновлен")
     @PutMapping("/{id}")
     public ResponseEntity<UserDto> updateUser(@PathVariable Long id, @RequestBody UserDto userDto){
         User updatedUser = userService.updateUser(id, userDto);
         return ResponseEntity.ok(new UserDto(updatedUser.getName(), updatedUser.getEmail(), updatedUser.getAge()));
     }
 
-
+    @Operation(summary = "Удаляет пользователя")
+    @ApiResponse(responseCode = "200", description = "Пользователь удален")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteUser(@PathVariable Long id){
         userService.deleteUser(id);

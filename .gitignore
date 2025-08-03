@@ -23,6 +23,8 @@ spring.log
 /test-output/
 /surefire-reports/
 /jacoco.exec
+notification-service/target/
+user-service/target/
 
 /kafka-embedded-*
 
