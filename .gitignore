@@ -25,6 +25,7 @@ spring.log
 /jacoco.exec
 notification-service/target/
 user-service/target/
+api-gateway/target/
 
 /kafka-embedded-*
 

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.example.dto.UserDto;
 import org.example.model.User;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -46,6 +47,7 @@ public class UserControllerTest {
                 .andExpect(status().isOk());
     }
 
+
     @Test
     void testGetAllUsers() throws Exception {
         List<User> users = List.of(new User("John", "john@example.com", 25));
@@ -53,10 +55,10 @@ public class UserControllerTest {
 
         mockMvc.perform(get("/api/users"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.size()").value(users.size()))
-                .andExpect(jsonPath("$[0].name").value("John"))
-                .andExpect(jsonPath("$[0].email").value("john@example.com"))
-                .andExpect(jsonPath("$[0].age").value(25));
+                .andExpect(jsonPath("$._embedded.userDtoList.length()").value(users.size()))
+                .andExpect(jsonPath("$._embedded.userDtoList[0].name").value("John"))
+                .andExpect(jsonPath("$._embedded.userDtoList[0].email").value("john@example.com"))
+                .andExpect(jsonPath("$._embedded.userDtoList[0].age").value(25));
     }
 
     @Test
