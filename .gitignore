@@ -26,6 +26,7 @@ spring.log
 notification-service/target/
 user-service/target/
 api-gateway/target/
+eureka-server/target/
 
 /kafka-embedded-*
 
