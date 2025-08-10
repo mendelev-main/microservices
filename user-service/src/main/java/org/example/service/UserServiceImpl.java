@@ -1,10 +1,11 @@
 package org.example.service;
 
-
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import lombok.RequiredArgsConstructor;
 import org.example.dto.UserDto;
 import org.example.model.User;
 import org.example.repository.UserRepository;
+
 import org.springframework.stereotype.Service;
 
 import org.example.kafka.producer.KafkaMessageProducer;
@@ -24,9 +25,10 @@ public class UserServiceImpl implements UserService {
     @Override
     public User createUser(UserDto dto) {
         User user = new User(dto.getName(), dto.getEmail(), dto.getAge());
-        kafkaProducer.sendUserEvent("CREATE", user.getEmail());
+        userRepository.save(user);
+        sendUserEventWithCircuitBreaker("CREATE", user.getEmail());
 
-        return userRepository.save(user);
+        return user;
     }
 
     @Override
@@ -55,8 +57,18 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findById(id).orElseThrow(() -> new RuntimeException("User not found"));
         userRepository.deleteById(id);
 
-        kafkaProducer.sendUserEvent("DELETE", user.getEmail());
+        sendUserEventWithCircuitBreaker("DELETE", user.getEmail());
 
+    }
+
+    @CircuitBreaker(name = "kafkaCB", fallbackMethod = "fallbackKafka")
+    public void sendUserEventWithCircuitBreaker(String action, String email) {
+        kafkaProducer.sendUserEvent(action, email);
+    }
+
+    public void fallbackKafka(String action, String email, Throwable throwable) {
+        System.err.println("Kafka недоступна. Событие " + action + " для " + email + " не отправлено.\n " +
+                "Причина : " + throwable.getMessage());
     }
 
 
